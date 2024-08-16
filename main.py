@@ -18,9 +18,11 @@ bot = commands.Bot(
 )
 
 def do_magic():
-    cl.set_input_mute(os.environ['AUDIO_SOUCE_NAME'], True)
+    if os.environ['OBS_WS_ACTIVE'] == "1":
+      cl.set_input_mute(os.environ['AUDIO_SOUCE_NAME'], True)
     playsound.playsound(os.environ['MUSIC_FILE'])
-    cl.set_input_mute(os.environ['AUDIO_SOUCE_NAME'], False)
+    if os.environ['OBS_WS_ACTIVE'] == "1":
+      cl.set_input_mute(os.environ['AUDIO_SOUCE_NAME'], False)
 
 @bot.event
 async def event_ready():
@@ -50,5 +52,6 @@ async def test(ctx):
 with open('allowed_users.txt') as f:
     allowed_users = list(map(lambda x: x.replace("\n",""),f.readlines()))
 
-cl = obs.ReqClient(host='localhost', port=os.environ['OBS_PORT'], password=os.environ['OBS_PASSWORD'], timeout=3)
+if os.environ['OBS_WS_ACTIVE'] == "1":
+  cl = obs.ReqClient(host='localhost', port=os.environ['OBS_PORT'], password=os.environ['OBS_PASSWORD'], timeout=3)
 bot.run()
